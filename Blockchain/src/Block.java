@@ -2,7 +2,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Objects;
 import java.util.TimeZone;
 
 public class Block {
@@ -12,10 +11,10 @@ public class Block {
     private final String timezone;
     private final String user;
     private final double value;
-    private final String hash;
+    private String hash;
 
     //difficulty for generating the hash
-    private final int difficulty = 1;
+    private final int difficulty = 2;
 
     public Block(String data, String user, double value){
         this.data = data;
@@ -28,11 +27,9 @@ public class Block {
         this.hash = null;
     }
 
-    public String calcHash(Block previousBlock){
+    public String mineBlock(Block previousBlock){
 
         String previousHash = previousBlock.getHash();
-
-        //TODO implement hashing with difficulty
 
         MessageDigest messageDigest = null;
         try {
@@ -49,6 +46,7 @@ public class Block {
         System.out.println(substring);
 
         String hash;
+        int length = 0;
 
         //TODO was wenn es keinen hash im Intervall des index gibt?  
         double i = 0.0;
@@ -59,13 +57,19 @@ public class Block {
             messageDigest.update(stringToHash.getBytes());
             byte[] hashBytes = messageDigest.digest();
             hash = new String(hashBytes, StandardCharsets.UTF_8);
-            System.out.println(hash);
+            //System.out.println(hash);
             i = i + 0.00000000000001;
-            System.out.println(i);
+            //System.out.println(i);
+            //System.out.println(hash.length());
+            if(length < hash.length()){
+                length = hash.length();
+            }
         } while(!hash.substring(0, difficulty).equals(substring));
 
-
+        System.out.println(length);
         System.out.println("HASH: " + hash);
+
+        this.hash = hash;
 
         return hash;
     }

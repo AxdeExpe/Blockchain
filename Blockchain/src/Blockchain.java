@@ -14,7 +14,7 @@ public class Blockchain {
 
     private void generateGenesisBlock(){
         Block genesis = new Block(null, "genesis", 0.0);
-        genesis.calcHash(genesis);
+        genesis.mineBlock(genesis);
         this.addBlock(genesis);
     }
 
@@ -24,7 +24,7 @@ public class Blockchain {
 
     public int checkBlockchain(){
 
-        if(this.chain.toArray().length < 2){
+        if(this.chain.toArray().length < 3){
             System.out.println("Can not check the Blockchain, length: " + this.chain.toArray().length);
             return 2;
         }
@@ -33,12 +33,12 @@ public class Blockchain {
             Block previousBlock = this.chain.get(i-1);
             String proofingHash = previousBlock.getHash();
 
-            String calculatedHash = previousBlock.calcHash(previousBlock);
+            String calculatedHash = previousBlock.mineBlock(previousBlock);
 
             if(!Objects.equals(proofingHash, calculatedHash)){
                 System.out.println("BLOCK " + i + " is not valid to Block " + (i-1));
                 System.out.println("Hash is invalid! Hash proof.: " + proofingHash + "; Hash calc.: " + calculatedHash);
-                System.out.println(this.chain.get(i-1).getHash() + " " + this.chain.get(i).getHash());
+                //System.out.println(this.chain.get(i-1).getHash() + " " + this.chain.get(i).getHash());
 
                 //TODO delete Block
 
@@ -49,7 +49,7 @@ public class Blockchain {
     }
 
     public Block getPreviousBlock(){
-        return this.chain.get(this.chain.toArray().length - 1);
+        return this.chain.get(this.chain.size()-1);
     }
 
     public int exportBlockchain(){
