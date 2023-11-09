@@ -3,23 +3,40 @@
 public class Main {
     public static void main(String[] args) {
 
+        int cores = Runtime.getRuntime().availableProcessors();
+        Thread[] t = new Thread[cores];
+
         Blockchain chain = new Blockchain();
-        int ret = chain.checkBlockchain();
 
-        Block first = new Block("asbjkd", "first", 0.5);
-        first.mineBlock(chain.getPreviousBlock());
-        chain.addBlock(first);
+        //Block first = new Block(chain.getPreviousBlock(),0.0, Double.MAX_VALUE, "asbjkd", "first", 0.5);
+        //first.mineBlock(chain.getPreviousBlock());
+/*
+        double fraction = Double.MAX_VALUE / cores;
+
+        Block first = null;
+
+        for(int i = 0; i < cores; i++){
+            double start = i * fraction;
+            double end = (i+1) * fraction;
+            first = new Block(chain.getPreviousBlock(),start, end, "asbjkd", "first", 0.5);
+            t[i] = new Thread(first);
+            t[i].start();
+        }
+
+*/
+
+       // chain.addBlock(first);
         //chain.addBlock(first);
         //chain.addBlock(first);
 
-        chain.checkBlockchain();
-
-
+/*
         Block second = new Block("328r79", "second", 1.0);
         second.mineBlock(chain.getPreviousBlock());
         chain.addBlock(second);
 
-        chain.checkBlockchain();
-
+        Block third = new Block("fsf", "third", 9.0);
+        third.mineBlock(chain.getPreviousBlock());
+        chain.addBlock(third);
+*/
     }
 }

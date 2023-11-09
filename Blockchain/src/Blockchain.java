@@ -6,15 +6,37 @@ import java.util.Objects;
 public class Blockchain {
 
     List<Block> chain;
+    private BlockchainStatus blockchainStatus;
 
     public Blockchain(){
         this.chain = new ArrayList<>();
+        this.blockchainStatus = new BlockchainStatus();
         this.generateGenesisBlock();
     }
 
     private void generateGenesisBlock(){
-        Block genesis = new Block(null, "genesis", 0.0);
-        genesis.mineBlock(genesis);
+        int cores = Runtime.getRuntime().availableProcessors();
+        Thread[] t = new Thread[cores];
+
+        //Block first = new Block(chain.getPreviousBlock(),0.0, Double.MAX_VALUE, "asbjkd", "first", 0.5);
+        //first.mineBlock(chain.getPreviousBlock());
+
+        double fraction = Double.MAX_VALUE / cores;
+
+        Block genesis = null;
+
+        for(int i = 1; i <= cores; i++){
+            // --> [0, 1/x-0] -> (1/x, 1/x-1] -> (1/x-2, 1/x-3] -> ...
+            // --> start: [0, fraction] -> (1 * fraction, 2 * fraction] -> (2 * fraction, 3 * fraction] -> ...
+            double start = ((i-1) * fraction) + i-1;
+            double end = i * fraction;
+
+            genesis = new Block(null,start, end, "asbjkd", "first", 0.5, this.blockchainStatus);
+            t[i-1] = new Thread(genesis);
+            t[i-1].start();
+        }
+
+        //TODO implement threading
         this.addBlock(genesis);
     }
 
@@ -22,38 +44,13 @@ public class Blockchain {
         this.chain.add(block);
     }
 
-    public int checkBlockchain(){
-
-        if(this.chain.toArray().length < 3){
-            System.out.println("Can not check the Blockchain, length: " + this.chain.toArray().length);
-            return 2;
-        }
-
-        for(int i = 1; i <= this.chain.toArray().length; i++){
-            Block previousBlock = this.chain.get(i-1);
-            String proofingHash = previousBlock.getHash();
-
-            String calculatedHash = previousBlock.mineBlock(previousBlock);
-
-            if(!Objects.equals(proofingHash, calculatedHash)){
-                System.out.println("BLOCK " + i + " is not valid to Block " + (i-1));
-                System.out.println("Hash is invalid! Hash proof.: " + proofingHash + "; Hash calc.: " + calculatedHash);
-                //System.out.println(this.chain.get(i-1).getHash() + " " + this.chain.get(i).getHash());
-
-                //TODO delete Block
-
-                //return 1;
-            }
-        }
-        return 0;
-    }
-
     public Block getPreviousBlock(){
         return this.chain.get(this.chain.size()-1);
     }
 
     public int exportBlockchain(){
-        
+
+
 
         return 0;
     }
