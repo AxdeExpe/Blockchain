@@ -15,7 +15,7 @@ public class Block implements Runnable{
     private String hash;
 
     //difficulty for generating the hash
-    private final int difficulty = 1;
+    private final int difficulty = 5;
 
     private Block previousBlock;
     private double start;
@@ -65,10 +65,10 @@ public class Block implements Runnable{
 
         String substring = "0";
         for(int i = 1; i < difficulty; i++){
-            substring += i;
+            substring += "0";
         }
 
-        //System.out.println(substring);
+        System.out.println(substring);
 
         String hash;
         String randomString;
@@ -92,7 +92,7 @@ public class Block implements Runnable{
             byte[] hashBytes = messageDigest.digest();
             hash = new String(hashBytes, StandardCharsets.UTF_8);
 
-            System.out.println("THREAD " + Thread.currentThread().getId() + ": " + hash);
+            //System.out.println("THREAD " + Thread.currentThread().getId() + ": " + hash);
             start += 0.000000000000000001;
             //System.out.println(i);
             //System.out.println(hash.length());

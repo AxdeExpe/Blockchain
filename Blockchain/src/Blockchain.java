@@ -36,8 +36,17 @@ public class Blockchain {
             t[i-1].start();
         }
 
+        for(int i = 0; i < cores; i++){
+            try {
+                t[i].join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         //TODO implement threading
         this.addBlock(genesis);
+        System.out.println("asd");
     }
 
     public void addBlock(Block block){
