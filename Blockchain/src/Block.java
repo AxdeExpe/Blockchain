@@ -2,7 +2,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Objects;
 import java.util.TimeZone;
 
 public class Block implements Runnable{
@@ -15,7 +14,9 @@ public class Block implements Runnable{
     private String hash;
 
     //difficulty for generating the hash
-    private final int difficulty = 5;
+    private final int difficulty = 3;
+
+    private String ruledPattern = "0";
 
     private Block previousBlock;
     private double start;
@@ -63,12 +64,11 @@ public class Block implements Runnable{
             throw new RuntimeException(e);
         }
 
-        String substring = "0";
         for(int i = 1; i < difficulty; i++){
-            substring += "0";
+            this.ruledPattern += "0";
         }
 
-        System.out.println(substring);
+        System.out.println(this.ruledPattern);
 
         String hash;
         String randomString;
@@ -96,25 +96,45 @@ public class Block implements Runnable{
             start += 0.000000000000000001;
             //System.out.println(i);
             //System.out.println(hash.length());
-        } while(!hash.substring(0, difficulty).equals(substring));
-
-        //System.out.println(length);
-        System.out.println("HASH: " + hash);
+        } while(!hash.substring(0, difficulty).equals(this.ruledPattern));
 
         this.hash = hash;
+
+        //System.out.println(length);
+        System.out.println("HASH: " + this.hash);
+
+
 
         return 0;
     }
 
 
+    private boolean isValidSHA512Hash(String hash) {
+        if (hash.length() != 64) {
+            System.out.println("lenght");
+            return false;
+        }
+
+        for (int i = 0; i < hash.length(); i++) {
+            char c = hash.charAt(i);
+            if ((c < '0' || c > '9') && (c < 'a' || c > 'f') && (c < 'A' || c > 'F')) {
+                System.out.println("char");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
 
     //getter for Blockchain
+    public String getRuledPattern(){return this.ruledPattern;}
     public String getHash(){
         return this.hash;
     }
 
-    public String getValue(){ return this.value;}
+    public double getValue(){ return this.value;}
 
     public String getData() {
         return this.data;

@@ -8,6 +8,15 @@ public class Main {
 
         Blockchain chain = new Blockchain();
 
+        System.out.println("HALO");
+
+        Data data = new Data(chain);
+        try {
+            data.exportChain("chain");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         //Block first = new Block(chain.getPreviousBlock(),0.0, Double.MAX_VALUE, "asbjkd", "first", 0.5);
         //first.mineBlock(chain.getPreviousBlock());
 /*
