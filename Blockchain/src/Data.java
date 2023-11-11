@@ -1,9 +1,8 @@
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class Data{
@@ -12,9 +11,16 @@ public class Data{
     private List<Block> chain;
 
     public Data(Blockchain chain){
-
         this.blockchain = chain;
         this.chain = blockchain.getChain();
+    }
+
+    public Data(){
+        try {
+            this.blockchain = new Blockchain();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void exportChain(String path) throws Exception{
@@ -38,42 +44,51 @@ public class Data{
             jsonObject.put("Block " + i, blockJSON);
         }
 
-        // Verwenden eines Objekts vom Typ `FileWriter`, um den Inhalt des JSON-Objekts in eine Datei zu schreiben
         FileWriter fileWriter = new FileWriter(path + ".json");
         fileWriter.write(jsonObject.toString());
         fileWriter.close();
 
     }
 
-    public void importChain(String path) throws Exception{
+    public Blockchain importChain(String path) throws Exception{
 
-        FileReader fileReader = null;
-        try {
-            fileReader = new FileReader(path);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        try{
+            String jsonContent = new String(Files.readAllBytes(Paths.get(path)));
 
-        JSONParser parser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) parser.parse(fileReader);
+            JSONObject jsonObject = new JSONObject(jsonContent);
 
-        JSONObject blockObject;
-        int i = 0;
+            JSONObject blockObject;
+            int i = 0;
 
-        while(true){
+            while(true){
 
-            if (jsonObject.has("Block " + i)) {
-                i++;
-                continue;
+                if (jsonObject.has("Block " + i)) {
+                    i++;
+                    continue;
+                }
+
+                blockObject = jsonObject.getJSONObject("Block " + (i-1));
+                break;
             }
 
-            blockObject = jsonObject.getJSONObject("Block " + i);
-            break;
+            String User = blockObject.getString("User");
+            String Data = blockObject.getString("Data");
+            double Value = Double.parseDouble(blockObject.getString("Value"));
+            String Hash = blockObject.getString("Hash");
+
+            System.out.println("Extracted Hash: " + Hash);
+
+            BlockchainStatus status = new BlockchainStatus();
+            Block pretendedGenesis = new Block(Hash, Data, User,Value, status);
+
+            this.blockchain.addBlock(pretendedGenesis);
+
+            return this.blockchain;
+
+        } catch(Exception e){
+            e.printStackTrace();
         }
 
-        String hash = blockObject.getString("Hash");
-
-        System.out.println(hash);
+        return null;
     }
-
 }

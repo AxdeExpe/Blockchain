@@ -18,17 +18,17 @@ public class Block implements Runnable{
 
     private String ruledPattern = "0";
 
-    private Block previousBlock;
+    private Block previousBlock = null;
+    private String previousHash = null;
     private double start;
-    private final double end;
-    private BlockchainStatus blockchainStatus;
+    private double end;
+    private final BlockchainStatus blockchainStatus;
 
     public Block(Block previousBlock, double start, double end, String data, String user, double value, BlockchainStatus blockchainStatus){
         this.data = data;
         this.timestamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
         TimeZone tz = TimeZone.getDefault();
         this.timezone = tz.getID();
-        //System.out.println(timestamp + " " + timezone);
         this.user = user;
         this.value = value;
         this.hash = null;
@@ -39,9 +39,24 @@ public class Block implements Runnable{
         this.blockchainStatus = blockchainStatus;
     }
 
+    public Block(String previousHash, String data, String user, double value, BlockchainStatus blockchainStatus){
+        this.data = data;
+        this.timestamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+        TimeZone tz = TimeZone.getDefault();
+        this.timezone = tz.getID();
+        this.user = user;
+        this.value = value;
+        this.hash = previousHash;
+
+        //this.previousHash = previousHash;
+        //this.start = start;
+        //this.end = end;
+        this.blockchainStatus = blockchainStatus;
+    }
+
     public void run(){
         if (this.mineBlock() == 1 || blockchainStatus.isHashFound()) {
-            System.out.println("No block found!");
+            return;
         } else {
             blockchainStatus.setHashFound(true);
             System.out.println("Hash found by thread: " + Thread.currentThread().getId());
@@ -50,12 +65,14 @@ public class Block implements Runnable{
 
     private int mineBlock(){
 
-        String previousHash = null;
-        if(previousBlock != null){
-            previousHash = previousBlock.getHash();
+        // if Block(String hash, ...) got called without Block.setStartAndEnd(...)
+        if(this.end == 0.0){
+            return 1;
         }
 
-        System.out.println("PREVIOUS HASH: " + previousHash);
+        if(this.previousBlock != null){
+            this.previousHash = previousBlock.getHash();
+        }
 
         MessageDigest messageDigest = null;
         try {
@@ -64,15 +81,14 @@ public class Block implements Runnable{
             throw new RuntimeException(e);
         }
 
+        // Example: "0000000xxxxxxxxxxxxx"
         for(int i = 1; i < difficulty; i++){
             this.ruledPattern += "0";
         }
 
-        System.out.println(this.ruledPattern);
-
         String hash;
         String randomString;
-        int length = 0;
+        //int length = 0;
 
         //TODO was wenn es keinen hash im Intervall des index gibt?
 
@@ -83,7 +99,7 @@ public class Block implements Runnable{
 
             String formattedStart = String.format("%.16f", start);
             randomString = Long.toHexString(Double.doubleToLongBits(Math.random()));
-            String stringToHash = data + timezone + timestamp + user + Double.toString(value) + previousHash + formattedStart + randomString;
+            String stringToHash = data + timezone + timestamp + user + Double.toString(value) + this.previousHash + formattedStart + randomString;
 
             //System.out.println(stringToHash);
             messageDigest.reset();

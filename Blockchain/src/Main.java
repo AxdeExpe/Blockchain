@@ -3,10 +3,8 @@
 public class Main {
     public static void main(String[] args) {
 
-        int cores = Runtime.getRuntime().availableProcessors();
-        Thread[] t = new Thread[cores];
-
         Blockchain chain = new Blockchain();
+        chain.generateGenesisBlock();
 
         System.out.println("HALO");
 
@@ -17,35 +15,18 @@ public class Main {
             throw new RuntimeException(e);
         }
 
-        //Block first = new Block(chain.getPreviousBlock(),0.0, Double.MAX_VALUE, "asbjkd", "first", 0.5);
-        //first.mineBlock(chain.getPreviousBlock());
-/*
-        double fraction = Double.MAX_VALUE / cores;
+        // Bestehende Blockchain einbinden und weitere Blöcke hinzufügen
+        Data data2 = new Data();
+        try {
+            Blockchain chain2 = data2.importChain("chain.json");
+            chain2.generateBlock("Test", "second", 2.1);
 
-        Block first = null;
+            Data export = new Data(chain2);
+            export.exportChain("chain2");
 
-        for(int i = 0; i < cores; i++){
-            double start = i * fraction;
-            double end = (i+1) * fraction;
-            first = new Block(chain.getPreviousBlock(),start, end, "asbjkd", "first", 0.5);
-            t[i] = new Thread(first);
-            t[i].start();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-*/
-
-       // chain.addBlock(first);
-        //chain.addBlock(first);
-        //chain.addBlock(first);
-
-/*
-        Block second = new Block("328r79", "second", 1.0);
-        second.mineBlock(chain.getPreviousBlock());
-        chain.addBlock(second);
-
-        Block third = new Block("fsf", "third", 9.0);
-        third.mineBlock(chain.getPreviousBlock());
-        chain.addBlock(third);
-*/
     }
 }
