@@ -106,8 +106,33 @@ public class Block implements Runnable{
         return 0;
     }
 
+
+
+
     //getter for Blockchain
     public String getHash(){
         return this.hash;
+    }
+
+    public String getValue(){ return this.value;}
+
+    public String getData() {
+        return this.data;
+    }
+
+    public int getDifficulty() {
+        return this.difficulty;
+    }
+
+    public String getTimestamp() {
+        return this.timestamp;
+    }
+
+    public String getTimezone() {
+        return this.timezone;
+    }
+
+    public String getUser() {
+        return this.user;
     }
 }

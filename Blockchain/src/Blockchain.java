@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class Blockchain {
 
-    List<Block> chain;
+    private List<Block> chain;
     private BlockchainStatus blockchainStatus;
 
     public Blockchain(){
@@ -57,34 +57,10 @@ public class Blockchain {
         return this.chain.get(this.chain.size()-1);
     }
 
-    public int exportBlockchain(){
 
+    //getter for chain
 
-
-        return 0;
+    public List<Block> getChain() {
+        return this.chain;
     }
-
-
-
-
-
-
-
-
-    //It's for an existing Blockchain in JSON format
-    public int importExistingChain(File chain){
-
-
-        return 0;
-    }
-
-    private int readChain(){
-
-        return 0;
-    }
-
-
-
-
-
 }
