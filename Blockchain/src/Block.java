@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -39,18 +40,14 @@ public class Block implements Runnable{
         this.blockchainStatus = blockchainStatus;
     }
 
-    public Block(String previousHash, String data, String user, double value, BlockchainStatus blockchainStatus){
+    public Block(String previousHash, String data, String user, double value, String tz, String ts, BlockchainStatus blockchainStatus){
         this.data = data;
-        this.timestamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
-        TimeZone tz = TimeZone.getDefault();
-        this.timezone = tz.getID();
+        this.timestamp = ts;
+        this.timezone = tz;
         this.user = user;
         this.value = value;
         this.hash = previousHash;
 
-        //this.previousHash = previousHash;
-        //this.start = start;
-        //this.end = end;
         this.blockchainStatus = blockchainStatus;
     }
 
@@ -63,10 +60,11 @@ public class Block implements Runnable{
         }
     }
 
+    //TODO run the calculation on the GPU
     private int mineBlock(){
 
         // if Block(String hash, ...) got called without Block.setStartAndEnd(...)
-        if(this.end == 0.0){
+        if(end == 0.0){
             return 1;
         }
 
@@ -87,18 +85,18 @@ public class Block implements Runnable{
         }
 
         String hash;
-        String randomString;
         //int length = 0;
 
-        //TODO was wenn es keinen hash im Intervall des index gibt?
+        //TODO what if no hash exists in the interval of the double start - end
+        //FIXME: create random string
 
         do{
             if (this.blockchainStatus.isHashFound() || start > end) {
                 return 1;
             }
 
-            String formattedStart = String.format("%.16f", start);
-            randomString = Long.toHexString(Double.doubleToLongBits(Math.random()));
+            String formattedStart = Double.toString(start);
+            String randomString = String.valueOf(Math.random());
             String stringToHash = data + timezone + timestamp + user + Double.toString(value) + this.previousHash + formattedStart + randomString;
 
             //System.out.println(stringToHash);
@@ -109,7 +107,7 @@ public class Block implements Runnable{
             hash = new String(hashBytes, StandardCharsets.UTF_8);
 
             //System.out.println("THREAD " + Thread.currentThread().getId() + ": " + hash);
-            start += 0.000000000000000001;
+            start += 0.000000000001;
             //System.out.println(i);
             //System.out.println(hash.length());
         } while(!hash.substring(0, difficulty).equals(this.ruledPattern));
@@ -118,8 +116,6 @@ public class Block implements Runnable{
 
         //System.out.println(length);
         System.out.println("HASH: " + this.hash);
-
-
 
         return 0;
     }

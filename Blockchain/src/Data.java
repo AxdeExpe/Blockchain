@@ -57,31 +57,33 @@ public class Data{
 
             JSONObject jsonObject = new JSONObject(jsonContent);
 
-            JSONObject blockObject;
             int i = 0;
 
             while(true){
 
                 if (jsonObject.has("Block " + i)) {
+
+                    JSONObject blockObject = jsonObject.getJSONObject("Block " + i);
+
+                    String User = blockObject.getString("User");
+                    String Data = blockObject.getString("Data");
+                    double Value = Double.parseDouble(blockObject.getString("Value"));
+                    String Hash = blockObject.getString("Hash");
+                    String Timezone = blockObject.getString("Timezone");
+                    String Timestamp = blockObject.getString("Timestamp");
+
+                    System.out.println("Extracted Hash: " + Hash);
+
+                    BlockchainStatus status = new BlockchainStatus();
+                    Block b = new Block(Hash, Data, User,Value, Timezone, Timestamp, status);
+
+                    this.blockchain.addBlock(b);
+
                     i++;
-                    continue;
                 }
 
-                blockObject = jsonObject.getJSONObject("Block " + (i-1));
                 break;
             }
-
-            String User = blockObject.getString("User");
-            String Data = blockObject.getString("Data");
-            double Value = Double.parseDouble(blockObject.getString("Value"));
-            String Hash = blockObject.getString("Hash");
-
-            System.out.println("Extracted Hash: " + Hash);
-
-            BlockchainStatus status = new BlockchainStatus();
-            Block pretendedGenesis = new Block(Hash, Data, User,Value, status);
-
-            this.blockchain.addBlock(pretendedGenesis);
 
             return this.blockchain;
 

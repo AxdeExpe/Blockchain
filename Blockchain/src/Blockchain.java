@@ -65,7 +65,7 @@ public class Blockchain {
             double start = ((i) * fraction) + i;
             double end = i+1 * fraction;
 
-            System.out.println("HASH PREVIOS BLOCK" + this.getPreviousBlock().getHash());
+            //System.out.println("HASH PREVIOS BLOCK" + this.getPreviousBlock().getHash());
 
             BlockList.add(new Block(this.getPreviousBlock(),start, end, data, user, value, this.blockchainStatus));
             t[i] = new Thread(BlockList.get(i));
@@ -94,6 +94,17 @@ public class Blockchain {
         }
 
         this.addBlock(block);
+    }
+
+    public boolean checkChain(){
+
+        for(int i = 0; i < chain.size(); i++){
+            Block b = chain.get(i);
+
+            //TODO implement threading
+        }
+
+        return true;
     }
 
     public void addBlock(Block block){

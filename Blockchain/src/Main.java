@@ -2,11 +2,11 @@
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) {
-
+/*
         Blockchain chain = new Blockchain();
         chain.generateGenesisBlock();
 
-        System.out.println("HALO");
+       // System.out.println("HALO");
 
         Data data = new Data(chain);
         try {
@@ -14,7 +14,7 @@ public class Main {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
+*/
         // Bestehende Blockchain einbinden und weitere Blöcke hinzufügen
         Data data2 = new Data();
         try {
@@ -28,5 +28,7 @@ public class Main {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+
     }
 }
